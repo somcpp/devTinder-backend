@@ -3,8 +3,15 @@ const connectDB =  require("./config/database")
 const app = express();
 const User = require ("./models/user")
 const {validatSignUpData} = require("./middlewares/validation")
+const bcrypt = require('bcrypt');
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
+const { userAuth } = require("./middlewares/auth");
+
+
 app.use(express.json())
-const bcrypt = require('bcrypt')
+app.use(cookieParser())
+
 app.post("/signup", async(req,res) => {
   try{
     const {firstName,lastName,emailId,password} = req.body;
@@ -35,6 +42,8 @@ app.post("/login", async(req,res) => {
     if(!isPasswordValid) {
       throw new Error("invalid credentials");
     }
+    const token = await jwt.sign({_id: user.id}, "dev123456")
+    res.cookie("token",token);
     res.send("Login Successsful")
   }catch(err) {
     res.send(err.message)
@@ -80,18 +89,18 @@ app.patch("/users/:id", async (req, res) => {
 });
 
 
-app.get("/user", async(req,res) => {
-  const {firstName} = req.body;
-  console.log(firstName);
-  try{
-    const user = await User.find({firstName: firstName})
-    res.send(user)
+app.get("/profile",userAuth, async(req,res) => {
+  try {
+    res.send(req.user)
   }
   catch(err) {
-    res.status(400).send("error in getting user")  
+    res.status(400).send("Error in getting user : " + err.message)  
   }
 })
 
+app.get("/users", async(req,res) => {
+
+})
 
 
 connectDB()

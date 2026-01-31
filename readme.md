@@ -1,0 +1,6 @@
+- install cookie-parser
+- just send a dummy cookie to user
+- create GET / profile Api and check if you get the cookie back
+- install jsonwebtoken
+- in login api ,create a JWT token and send it to the user 
+- read the cookies inside your profile api
