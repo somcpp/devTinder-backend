@@ -7,6 +7,11 @@ const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/requests")
 const userRouter = require('./routes/user')
+const cors = require('cors')
+
+app.use(cors({
+  origin: "*"
+}))
 
 app.use(express.json())
 app.use(cookieParser())
@@ -16,6 +21,10 @@ app.use("/profile", profileRouter)
 app.use("/request", requestRouter)
 app.use("/user",userRouter);
 
+
+app.use("/", (req,res) => {
+  res.send("hello");
+})
 
 // app.patch("/users/:id", async (req, res) => {
 //   const { id } = req.params;
