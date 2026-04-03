@@ -3,6 +3,7 @@ const validateEditFields = (req) => {
     "firstName",
     "lastName",
     "emailId",
+    "PhotoURL",
     "age",
     "gender",
     "about",

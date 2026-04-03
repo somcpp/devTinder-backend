@@ -7,6 +7,6 @@ const profileRouter = express.Router();
 
 profileRouter.get("/view",userAuth,viewProfile )
 
-profileRouter.post("/edit", userAuth,editProfile)
+profileRouter.patch("/edit", userAuth,editProfile)
 
 module.exports = profileRouter

@@ -16,8 +16,7 @@ const userSchema = mongoose.Schema({
     }
   },
   about: {
-    type: String,
-    default: 'hello default'
+    type: String
   },
   PhotoURL: {
     type : String

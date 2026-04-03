@@ -67,7 +67,7 @@ Logout user (clears token cookie).
 #### GET `/profile/view`
 Get the logged-in user's profile.
 
-#### POST `/profile/edit`
+#### PATCH `/profile/edit`
 Edit the logged-in user's profile.
 **Body:**
 ```
