@@ -10,11 +10,11 @@ const pendingRequest = async (req, res) => {
         toUserId: loggedinUser._id,
         status: "intrested",
       })
-      .populate("fromUserId", USER_SAFE_DATA)
-      .select('fromUserId')
-    return res.status(201).json({
+      .populate("fromUserId")
+      
+    return res.status(201).json(
       connectionRequests,
-    });
+    );
   } catch (err) {
     res.status(400).send(err.message);
   }
@@ -51,7 +51,6 @@ const getExistingConnections = async (req, res) => {
 const userFeed = async (req, res) => {
   /*
     user feed should have all the users which the user has not interacted with like accepted ignored intrested
-    
   */
   try {
     const loggedInUserId = req.user._id;
@@ -75,12 +74,12 @@ const userFeed = async (req, res) => {
       hiddenUsers.add(k.fromUserId.toString());
       hiddenUsers.add(k.toUserId.toString());
     });
+    hiddenUsers.add(loggedInUserId.toString());
     const users = await user.find({
       _id: { $nin: Array.from(hiddenUsers) },
     })
-      .select(USER_SAFE_DATA)
-      .skip(skip)
-      .limit(limit);
+    
+    
     res.send(users);
   } catch (err) {
     res.status(400).send(err.message);
@@ -88,8 +87,22 @@ const userFeed = async (req, res) => {
 
 }
 
+const getUserById = async (req,res) => {
+
+  try {
+    const id = req.params.id;
+
+  const userDetails = await user.findById(id);
+  const {password,...data} = userDetails.toObject();
+  res.send(data);
+  } catch (error) {
+    res.status(405).send(error.message);
+  }
+}
+
 module.exports = {
   pendingRequest,
   getExistingConnections,
-  userFeed
+  userFeed,
+  getUserById
 }

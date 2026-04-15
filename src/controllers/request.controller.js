@@ -43,6 +43,21 @@ const sendRequest = async(req,res) => {
 
 }
 
+const outgoingRequests = async(req,res) => {
+  try {
+    const user = req.user;
+    const loggedInUserId = user._id;
+    const requests = await connectionRequestModel.find({
+      fromUserId: loggedInUserId
+    })
+    .populate("toUserId")
+    res.send(requests);
+  } catch (error) {
+    res.status(406).send("failed to get outgoing Requests")
+  }
+  
+}
+
 const reviewRequest = async(req,res) => {
   try{
     const loggedInUser = req.user;
@@ -76,5 +91,6 @@ const reviewRequest = async(req,res) => {
 
 module.exports = {
   sendRequest,
-  reviewRequest
+  reviewRequest,
+  outgoingRequests
 }

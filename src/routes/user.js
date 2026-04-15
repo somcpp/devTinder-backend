@@ -1,6 +1,6 @@
 const express = require("express");
 const { userAuth } = require("../middlewares/auth");
-const {pendingRequest, getExistingConnections, userFeed} = require("../controllers/user.controller")
+const {pendingRequest, getExistingConnections, userFeed, getUserById} = require("../controllers/user.controller")
 /*
 todo:
 1.show all the requests recieved to loggedinuser at his end
@@ -14,6 +14,9 @@ userRouter.get("/requests/pending", userAuth, pendingRequest);
 
 userRouter.get("/connections", userAuth, getExistingConnections);
 
-module.exports = userRouter;
-
 userRouter.get("/feed", userAuth, userFeed);
+
+userRouter.get("/view/:id", getUserById)
+
+
+module.exports = userRouter;

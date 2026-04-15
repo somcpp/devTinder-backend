@@ -22,11 +22,6 @@ app.use("/profile", profileRouter)
 app.use("/request", requestRouter)
 app.use("/user",userRouter);
 
-
-app.use("/", (req,res) => {
-  res.send("hello");
-})
-
 const port = process.env.PORT;
 
 connectDB()

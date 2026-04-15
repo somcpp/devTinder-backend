@@ -1,57 +1,151 @@
 const mongoose = require('mongoose');
-const validator = require('validator')
-const jwt = require("jsonwebtoken")
-const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
-const userSchema = mongoose.Schema({
-  firstName: String,
-  lastName: String,
-  emailId: {
+const experienceSchema = new mongoose.Schema({
+  company: {
     type: String,
-    unique:true,
-    validate(value) {
-      if(!validator.isEmail(value)) {
-        throw new Error("Invalid mail ")
-      }
-    }
+    trim: true
   },
-  about: {
+  position: {
+    type: String,
+    trim: true
+  },
+  startDate: {
     type: String
   },
-  PhotoURL: {
-    type : String
-  },
-  gender:{
+  endDate: {
     type: String,
-    validate(value) {
-      if(!["male","female"].includes(value)) {
-        throw new Error("Gender is not valid");
-      }
-    }
+    default: 'Present'
   },
-  skills:{
-    type: []
+  currentlyWorking: {
+    type: Boolean,
+    default: false
   },
-  password: String},
-  {
-    timestamps:true,
+  description: {
+    type: String,
+    default: null
   }
-  
-)
+}, { _id: false });
 
+const userSchema = new mongoose.Schema({
+  // Authentication & Basic Info
+  firstName: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  lastName: {
+    type: String,
+    trim: true,
+    default: null
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+
+  // Profile Information
+  photoURL: {
+    type: String,
+    default: null
+  },
+  gender: {
+    type: String,
+    enum: ['male', 'female', 'other'],
+    default: 'other'
+  },
+
+  // Academic Information
+  institution: {
+    type: String,
+    trim: true,
+    default: null
+  },
+  major: {
+    type: String,
+    trim: true,
+    default: null
+  },
+
+  // Bio & About
+  about: {
+    type: String,
+    maxlength: 500,
+    default: null
+  },
+
+  // Skills (Array of skill strings)
+  skills: {
+    type: [String],
+    default: []
+  },
+
+  // Experience (Array of experience objects)
+  experience: [experienceSchema],
+
+  // Professional & Social
+  location: {
+    type: String,
+    trim: true,
+    default: null
+  },
+  phone: {
+    type: String,
+    default: null
+  },
+  linkedin: {
+    type: String,
+    default: null
+  },
+  github: {
+    type: String,
+    default: null
+  },
+  twitter: {
+    type: String,
+    default: null
+  },
+
+  // Interests
+  interests: {
+    type: [String],
+    default: []
+  },
+
+  // Additional Metadata
+  isProfileComplete: {
+    type: Boolean,
+    default: false
+  },
+  profileCompletedAt: {
+    type: Date,
+    default: null
+  }
+}, 
+{
+  timestamps: true
+});
+
+// Existing methods remain the same
 userSchema.methods.getJWT = async function () {
   const user = this;
-
-  const token = await jwt.sign({_id: user._id}, "dev123", {expiresIn : "1d"});
-  return token
-} 
+  // Note: In production, "dev123" should be an environment variable
+  const token = await jwt.sign({ _id: user._id }, "dev123", { expiresIn: "1d" });
+  return token;
+};
 
 userSchema.methods.validatePassword = async function (passwordInputByUser) {
   const user = this;
-  const passwordHash = user.password;
-
-  const isPasswordValid = await bcrypt.compare(passwordInputByUser, passwordHash)
+  const isPasswordValid = await bcrypt.compare(passwordInputByUser, user.password);
   return isPasswordValid;
-}
+};
 
-module.exports = mongoose.model("User", userSchema);;
+module.exports = mongoose.model("User", userSchema);

@@ -1,16 +1,24 @@
 const User = require("../models/user")
-const validatSignUpData = async(req) => {
+const validateSignUpData = async(req) => {
+  const {firstName, email,password} = req.body;
   
-  const {firstName, lastName,emailId,password} = req.body;
-  const user = await User.findOne({emailId});
-  if(user) {
-    throw new Error("User Already exists")
+  if (!firstName) {
+    throw new Error("First name is required");
   }
-  if(!firstName || !lastName) {
-    throw new Error("Name is not valid")
-  } else if (firstName.length < 4 || firstName.length>50) {
-    throw new Error ("firstName should be 4 - 60 chars");
-  }
-}
 
-module.exports = {validatSignUpData}
+  if (!email) {
+    throw new Error("Email is required");
+  }
+
+  if (!password) {
+    throw new Error("Password is required");
+  }
+
+  const user = await User.findOne({ email });
+
+  if (user) {
+    throw new Error("User already exists");
+  }
+};
+
+module.exports = { validateSignUpData };
